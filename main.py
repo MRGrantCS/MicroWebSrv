@@ -76,11 +76,33 @@ finally:
   print("Password =",password)
 
 #--- aiocon
-msg = aioCon()
 
-print("We got the message", msg)
 
 # ----------------------------------------------------------------------------
+@MicroWebSrv.route('/aio')
+def _httpHandlerAIOGet(httpClient, httpResponse) :
+	content = """\
+	<!DOCTYPE html>
+	<html lang=en>
+        <head>
+        	<meta charset="UTF-8" />
+            <title>AIO GET</title>
+        </head>
+        <body>
+            <h1>AIO GET</h1>
+            Client IP address = %s
+            <br />
+            <input type="button" id='script' name="scriptbutton" value=" Run Script " onclick="%s">
+			</form>
+        </body>
+    </html>
+	""" % (httpClient.GetIPAddr(), aioCon())
+	httpResponse.WriteResponseOk( headers		 = None,
+								  contentType	 = "text/html",
+								  contentCharset = "UTF-8",
+								  content 		 = content )
+	
+
 
 @MicroWebSrv.route('/test')
 def _httpHandlerTestGet(httpClient, httpResponse) :
