@@ -3,7 +3,7 @@ try:
 except:
   import socket
 
-import aioCon from adaioCon
+from adaioCon import aioCon
 
 try:
   import uos as os
