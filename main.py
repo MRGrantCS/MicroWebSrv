@@ -3,7 +3,7 @@ try:
 except:
   import socket
 
-from adaioCon import aioCon
+import aioCon
 
 try:
   import uos as os
@@ -77,6 +77,8 @@ finally:
 
 #--- aiocon
 
+if aioTest() == True & AP == False:
+  aioCon()
 
 # ----------------------------------------------------------------------------
 
