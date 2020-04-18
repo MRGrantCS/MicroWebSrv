@@ -96,12 +96,13 @@ def _httpHandlerAIOGet(httpClient, httpResponse) :
 			</form>
         </body>
     </html>
-	""" % (httpClient.GetIPAddr(), aioCon())
+	""" % (httpClient.GetIPAddr())
 	httpResponse.WriteResponseOk( headers		 = None,
 								  contentType	 = "text/html",
 								  contentCharset = "UTF-8",
 								  content 		 = content )
-	
+	aioCon()
+
 
 
 @MicroWebSrv.route('/test')

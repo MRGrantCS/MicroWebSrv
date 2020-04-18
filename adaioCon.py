@@ -28,7 +28,7 @@ def aioCon ():
   #         (about 1/4 of the micropython heap on the ESP8266 platform)
   ADAFRUIT_IO_URL = b'io.adafruit.com'
   ADAFRUIT_USERNAME = b'Scytale86'
-  ADAFRUIT_IO_KEY = b'aio_vnzw72dlsXLMHRX0iBSS4aMbKWuN'
+  ADAFRUIT_IO_KEY = b'aio_LfhO26pXZPIhNEHJL2PbYRvpLK3z'
   ADAFRUIT_IO_FEEDNAME = b'onoff'
 
   client = MQTTClient(client_id=mqtt_client_id, 
@@ -54,9 +54,6 @@ def aioCon ():
   mqtt_feedname_get = bytes('{:s}/get'.format(mqtt_feedname), 'utf-8')    
   client.publish(mqtt_feedname_get, '\0')  
 
-  client.wait_msg()
-
-'''
   # wait until data has been Published to the Adafruit IO feed
   while True:
       try:
@@ -66,4 +63,3 @@ def aioCon ():
           client.disconnect()
           sys.exit()
 
-'''
