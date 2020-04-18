@@ -15,8 +15,6 @@ import network
 import utime
 #from wificonfig import settings
 
-import ujson
-
 import esp
 esp.osdebug(None)
 
@@ -27,8 +25,7 @@ from settingsGetSet import setSettings, getSettings
 
 from microWebSrv import MicroWebSrv
 
-#--- Setup AP or Station
-
+#initialise variables
 AP = False
 filename = 'settings.json'
 ssid = ''
