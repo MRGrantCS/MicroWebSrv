@@ -25,7 +25,7 @@ esp.osdebug(None)
 import gc
 gc.collect()
 
-from settingsGetSet import setSettings, getSettings
+from settingsGetSet import setWifi, getWifi
 
 from microWebSrv import MicroWebSrv
 
@@ -39,7 +39,7 @@ password = ''
 #--- Set up wifi connection
 try:
   #--- Try to connect as Station
-  ssid , password = getSettings(filename, AP)
+  ssid , password = getWifi(filename, AP)
   station = network.WLAN(network.STA_IF)
   station.active(True)
   station.connect(ssid, password)
@@ -60,7 +60,7 @@ try:
 except Exception:
   #--- switch to AP mode, using AP details in settings.json
   AP = True
-  ssid , password = getSettings(filename, AP)
+  ssid , password = getWifi(filename, AP)
   ap = network.WLAN(network.AP_IF)
   ap.active(True)
   while ap.active() == False:
@@ -79,48 +79,31 @@ finally:
 
 
 # ----------------------------------------------------------------------------
-@MicroWebSrv.route('/aio')
-def _httpHandlerAIOGet(httpClient, httpResponse) :
+
+
+
+
+@MicroWebSrv.route('/settings')
+def _httpHandlerSettingsGet(httpClient, httpResponse) :
 	content = """\
 	<!DOCTYPE html>
 	<html lang=en>
         <head>
         	<meta charset="UTF-8" />
-            <title>AIO GET</title>
-        </head>
-        <body>
-            <h1>AIO GET</h1>
-            Client IP address = %s
-            <br />
-            <input type="button" id='script' name="scriptbutton" value=" Run Script ">
-			</form>
-        </body>
-    </html>
-	""" % (httpClient.GetIPAddr())
-	httpResponse.WriteResponseOk( headers		 = None,
-								  contentType	 = "text/html",
-								  contentCharset = "UTF-8",
-								  content 		 = content )
-	aioCon()
-
-
-
-@MicroWebSrv.route('/test')
-def _httpHandlerTestGet(httpClient, httpResponse) :
-	content = """\
-	<!DOCTYPE html>
-	<html lang=en>
-        <head>
-        	<meta charset="UTF-8" />
-            <title>TEST GET</title>
+            <title>Settings GET</title>
         </head>
         <body>
             <h1>TEST GET</h1>
-            Client IP address = %s
+            Your current IP address = %s
             <br />
 			<form action="/test" method="post" accept-charset="ISO-8859-1">
 				SSID: <input type="text" name="SSID"><br />
 				Password : <input type="text" name="PSK"><br />
+        <br />
+        ADAIO URL : <input type="text" name="URL"><br />
+        ADAIO Username : <input type="text" name="USERNAME"><br />
+        ADAIO Key : <input type="text" name="KEY"><br />
+        ADAIO Feed Name : <input type="text" name="FEEDNAME"><br />
 				<input type="submit" value="Submit">
 			</form>
         </body>
@@ -132,32 +115,42 @@ def _httpHandlerTestGet(httpClient, httpResponse) :
 								  content 		 = content )
 
 
-@MicroWebSrv.route('/test', 'POST')
-def _httpHandlerTestPost(httpClient, httpResponse) :
+@MicroWebSrv.route('/set', 'POST')
+def _httpHandlerSettingsPost(httpClient, httpResponse) :
 	formData  = httpClient.ReadRequestPostedFormData()
 	SSID = formData["SSID"]
 	PSK  = formData["PSK"]
+  URL  = formData["URL"]
+  USERNAME = formData["USERNAME"]
+  KEY  = formData["KEY"]
+  FEEDNAME  = formData["FEEDNAME"]
 	content   = """\
 	<!DOCTYPE html>
 	<html lang=en>
 		<head>
 			<meta charset="UTF-8" />
-            <title>TEST POST</title>
+            <title>Settings POST</title>
         </head>
         <body>
             <h1>TEST POST</h1>
             SSID = %s<br />
             PSK = %s<br />
+            <br />
+            ADAIO URL = %s<br />
+            ADAIO Username = %s<br />
+            ADAIO Key = %s<br />
+            ADAIO Feed Name = %s<br />
+
             Restart after update <br />
         </body>
     </html>
-	""" % ( MicroWebSrv.HTMLEscape(SSID),
-		    MicroWebSrv.HTMLEscape(PSK) )
+	""" % ( MicroWebSrv.HTMLEscape(SSID), MicroWebSrv.HTMLEscape(PSK) , MicroWebSrv.HTMLEscape(URL), MicroWebSrv.HTMLEscape(USERNAME), MicroWebSrv.HTMLEscape(KEY), MicroWebSrv.HTMLEscape(FEEDNAME))
 	httpResponse.WriteResponseOk( headers		 = None,
 								  contentType	 = "text/html",
 								  contentCharset = "UTF-8",
 								  content 		 = content )
-	setSettings("settings.json", SSID, PSK)
+	setWifi(filename, SSID, PSK)
+  setADA(filename, URL, USERNAME, KEY, FEEDNAME)
 
 
 @MicroWebSrv.route('/edit/<index>')             # <IP>/edit/123           ->   args['index']=123
@@ -218,6 +211,6 @@ def _closedCallback(webSocket) :
 
 srv = MicroWebSrv(webPath='www/')
 srv.MaxWebSocketRecvLen     = 256
-srv.WebSocketThreaded		= False
+srv.WebSocketThreaded		= True
 srv.AcceptWebSocketCallback = _acceptWebSocketCallback
-srv.Start()
+srv.Start(threaded=True)

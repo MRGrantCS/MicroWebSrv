@@ -5,6 +5,8 @@ import os
 import sys
 import uasyncio as asyncio
 
+from settingsGetSet import getADA
+
 #fn for async loop
 async def tryMsg ():
   print("I am in tryMsg")
@@ -36,10 +38,9 @@ def aioCon ():
   #   set MQTTClient initializer parameter to "ssl=True"
   #   Caveat: a secure connection uses about 9k bytes of the heap
   #         (about 1/4 of the micropython heap on the ESP8266 platform)
-  ADAFRUIT_IO_URL = b'io.adafruit.com'
-  ADAFRUIT_USERNAME = b'Scytale86'
-  ADAFRUIT_IO_KEY = b'aio_WAXD90YR4PiWD5EGCS0EVHcG2Olf'
-  ADAFRUIT_IO_FEEDNAME = b'onoff'
+  
+  
+  ADAFRUIT_IO_URL, ADAFRUIT_USERNAME, ADAFRUIT_IO_KEY, ADAFRUIT_IO_FEEDNAME = getADA()
 
   client = MQTTClient(client_id=mqtt_client_id, 
                       server=ADAFRUIT_IO_URL, 

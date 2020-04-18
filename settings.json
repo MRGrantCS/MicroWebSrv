@@ -2,5 +2,7 @@
   "AP":
       {"SSID":"AP1", "PSK":"123456789"},
   "STATION": 
-      {"SSID":"", "PSK":""}
+      {"SSID":"", "PSK":""},
+    "ADAIO":
+      {"URL":"io.adafruit.com", "USERNAME": "Scytale86", "KEY": "aio_WAXD90YR4PiWD5EGCS0EVHcG2Olf", "FEEDNAME": "onoff"}
 }
