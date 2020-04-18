@@ -3,8 +3,18 @@ import time
 from umqtt.robust import MQTTClient
 import os
 import sys
+import uasyncio as asyncio
 
-
+#fn for async loop
+async def tryMsg ():
+  print("I am in tryMsg")
+  try:
+    client.wait_msg()
+  except KeyboardInterrupt:
+    print('Ctrl-C pressed...exiting')
+    client.disconnect()
+    sys.exit()
+  await asyncio.sleep(1)
 
 # the following function is the callback which is 
 # called when subscribed data is received
@@ -28,7 +38,7 @@ def aioCon ():
   #         (about 1/4 of the micropython heap on the ESP8266 platform)
   ADAFRUIT_IO_URL = b'io.adafruit.com'
   ADAFRUIT_USERNAME = b'Scytale86'
-  ADAFRUIT_IO_KEY = b'aio_LfhO26pXZPIhNEHJL2PbYRvpLK3z'
+  ADAFRUIT_IO_KEY = b'aio_WAXD90YR4PiWD5EGCS0EVHcG2Olf'
   ADAFRUIT_IO_FEEDNAME = b'onoff'
 
   client = MQTTClient(client_id=mqtt_client_id, 
@@ -53,13 +63,17 @@ def aioCon ():
   # Described in the Adafruit IO blog, April 22, 2018:  https://io.adafruit.com/blog/  
   mqtt_feedname_get = bytes('{:s}/get'.format(mqtt_feedname), 'utf-8')    
   client.publish(mqtt_feedname_get, '\0')  
-
+  
+  loop = asyncio.get_event_loop()
+  loop.create_task(tryMsg())
+'''
   # wait until data has been Published to the Adafruit IO feed
   while True:
       try:
-          client.wait_msg()
+          client.wait_msg())
       except KeyboardInterrupt:
           print('Ctrl-C pressed...exiting')
           client.disconnect()
           sys.exit()
 
+'''

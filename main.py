@@ -92,7 +92,7 @@ def _httpHandlerAIOGet(httpClient, httpResponse) :
             <h1>AIO GET</h1>
             Client IP address = %s
             <br />
-            <input type="button" id='script' name="scriptbutton" value=" Run Script " onclick="%s">
+            <input type="button" id='script' name="scriptbutton" value=" Run Script ">
 			</form>
         </body>
     </html>
