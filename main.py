@@ -3,7 +3,7 @@ try:
 except:
   import socket
 
-import machine
+import aioCon from adaioCon
 
 try:
   import uos as os
@@ -12,8 +12,12 @@ except:
 
 import network
 
-import utime
-#from wificonfig import settings
+try:
+  import utime as time
+except:
+  import time
+
+from umqtt.robust import MQTTClient
 
 import esp
 esp.osdebug(None)
@@ -31,23 +35,30 @@ filename = 'settings.json'
 ssid = ''
 password = ''
 
+
+#--- Set up wifi connection
 try:
+  #--- Try to connect as Station
   ssid , password = getSettings(filename, AP)
   station = network.WLAN(network.STA_IF)
   station.active(True)
   station.connect(ssid, password)
+  #--- timed retries to allow esp32 to connect to network
   tries = 0  
   while tries < 5 and station.isconnected() == False:
     tries += 1
     print("Connection unsuccessful. Attempt:", tries)
-    utime.sleep(3)
+    time.sleep(3)
+  #--- raise exception if unable to connect to an AP
   if station.isconnected() == False:
     print('Could not connect as Station')  
     raise Exception
   print('Station Connection successful')
+  #--- Print IP details
   print(station.ifconfig())
 
 except Exception:
+  #--- switch to AP mode, using AP details in settings.json
   AP = True
   ssid , password = getSettings(filename, AP)
   ap = network.WLAN(network.AP_IF)
@@ -56,6 +67,7 @@ except Exception:
     pass
   ap.config(essid=ssid, password=password)
   print('Access Point Created')
+  #--- Print IP details
   print(ap.ifconfig())
 
 finally:
@@ -63,6 +75,8 @@ finally:
   print("SSID =",ssid)
   print("Password =",password)
 
+#--- aiocon
+aioCon()
 
 # ----------------------------------------------------------------------------
 
