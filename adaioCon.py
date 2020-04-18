@@ -10,6 +10,7 @@ def cb(topic, msg):
     print('Received Data:  Topic = {}, Msg = {}'.format(topic, msg))
     free_heap = str(msg,'utf-8')
     print('free heap size = {} bytes'.format(free_heap))
+    return str(msg,'utf-8')
 
 def aioCon ():
   # create a random MQTT clientID 
@@ -24,7 +25,7 @@ def aioCon ():
   #         (about 1/4 of the micropython heap on the ESP8266 platform)
   ADAFRUIT_IO_URL = b'io.adafruit.com'
   ADAFRUIT_USERNAME = b'Scytale86'
-  ADAFRUIT_IO_KEY = b'aio_hBmM96dKDLLP95LMX4EnPqo4O9Y1'
+  ADAFRUIT_IO_KEY = b'aio_sYCo84UEn5ChlfoxLPjwV4kPxN2N'
   ADAFRUIT_IO_FEEDNAME = b'onoff'
 
   client = MQTTClient(client_id=mqtt_client_id, 
@@ -40,7 +41,7 @@ def aioCon ():
       sys.exit()
 
   mqtt_feedname = bytes('{:s}/feeds/{:s}'.format(ADAFRUIT_USERNAME, ADAFRUIT_IO_FEEDNAME), 'utf-8')    
-  client.set_callback(cb)                    
+  msg = client.set_callback(cb)                    
   client.subscribe(mqtt_feedname)  
 
   # following two lines is an Adafruit-specific implementation of the Publish "retain" feature 
@@ -50,6 +51,10 @@ def aioCon ():
   mqtt_feedname_get = bytes('{:s}/get'.format(mqtt_feedname), 'utf-8')    
   client.publish(mqtt_feedname_get, '\0')  
 
+  client.wait_msg()
+  return msg
+  
+'''
   # wait until data has been Published to the Adafruit IO feed
   while True:
       try:
@@ -58,3 +63,5 @@ def aioCon ():
           print('Ctrl-C pressed...exiting')
           client.disconnect()
           sys.exit()
+
+'''

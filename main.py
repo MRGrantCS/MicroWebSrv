@@ -76,7 +76,9 @@ finally:
   print("Password =",password)
 
 #--- aiocon
-aioCon()
+msg = aioCon()
+
+print("We got the message", msg)
 
 # ----------------------------------------------------------------------------
 
