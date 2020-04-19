@@ -1,19 +1,8 @@
 import ujson
-def setWifi (filename, SSID, PSK):
-  
-  try:
-    import uos as os
-  except:
-    import os
-  with open(filename, 'r') as settings:
-    data = ujson.load(settings)
-    data['STATION']['SSID'] = SSID
-    data['STATION']['PSK'] = PSK
-  os.remove(filename)
-  with open(filename, 'w') as settings:
-    ujson.dump(data, settings)
-  print("Restart after Update")
-  #machine.reset()
+try:
+  import uos as os
+except:
+  import os
 
 def getWifi (filename, AP):
   with open(filename, 'r') as settings:
@@ -27,12 +16,28 @@ def getWifi (filename, AP):
 
   return SSID, PSK
 
-def setADA (filename, URL, USERNAME, KEY, FEEDNAME):
-  
-  try:
-    import uos as os
-  except:
-    import os
+def setWifi (filename, SSID, PSK):
+  with open(filename, 'r') as settings:
+    data = ujson.load(settings)
+    data['STATION']['SSID'] = SSID
+    data['STATION']['PSK'] = PSK
+  os.remove(filename)
+  with open(filename, 'w') as settings:
+    ujson.dump(data, settings)
+  print("Restart after Update")
+  #machine.reset()
+
+def getADA (filename):
+    with open(filename, 'r') as settings:
+      data = ujson.load(settings)
+      URL = data['ADAIO']['URL']
+      USERNAME = data['ADAIO']['USERNAME']
+      KEY = data['ADAIO']['KEY']
+      FEEDNAME = data['ADAIO']['FEEDNAME']
+
+    return bytes(URL,'utf-8'),bytes(USERNAME,'utf-8'),bytes(KEY,'utf-8'),bytes(FEEDNAME,'utf-8')
+
+def setADA (filename, URL, USERNAME, KEY, FEEDNAME):  
   with open(filename, 'r') as settings:
     data = ujson.load(settings)
     data['ADAIO']['URL'] = URL
@@ -44,12 +49,3 @@ def setADA (filename, URL, USERNAME, KEY, FEEDNAME):
   with open(filename, 'w') as settings:
     ujson.dump(data, settings)
   print("Restart after Update")
-
-def getADA (filename):
-    with open(filename, 'r') as settings:
-      data = ujson.load(settings)
-      URL = data['ADAIO']['URL']
-      USERNAME = data['ADAIO']['USERNAME']
-      KEY = data['ADAIO']['KEY']
-      FEEDNAME = data['ADAIO']['FEEDNAME']
-    return bytes(URL,'utf-8'),bytes(USERNAME,'utf-8'),bytes(KEY,'utf-8'),bytes(FEEDNAME,'utf-8')

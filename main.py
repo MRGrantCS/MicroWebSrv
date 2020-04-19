@@ -1,14 +1,4 @@
-try:
-  import usocket as socket
-except:
-  import socket
-
-import aioCon
-
-try:
-  import uos as os
-except:
-  import os
+from adaioCon import aioTest, aioCon
 
 import network
 
@@ -17,15 +7,13 @@ try:
 except:
   import time
 
-from umqtt.robust import MQTTClient
-
 import esp
 esp.osdebug(None)
 
 import gc
 gc.collect()
 
-from settingsGetSet import setWifi, getWifi
+from settingsGetSet import setWifi, getWifi, setADA
 
 from microWebSrv import MicroWebSrv
 
@@ -77,15 +65,15 @@ finally:
 
 #--- aiocon
 
-if aioTest() == True & AP == False:
-  aioCon()
+if AP == False and aioTest(filename) == True:
+  aioCon(filename)
 
 # ----------------------------------------------------------------------------
 
 
 
 
-@MicroWebSrv.route('/settings')
+@MicroWebSrv.route('/test')
 def _httpHandlerSettingsGet(httpClient, httpResponse) :
 	content = """\
 	<!DOCTYPE html>
@@ -117,15 +105,15 @@ def _httpHandlerSettingsGet(httpClient, httpResponse) :
 								  content 		 = content )
 
 
-@MicroWebSrv.route('/set', 'POST')
+@MicroWebSrv.route('/test', 'POST')
 def _httpHandlerSettingsPost(httpClient, httpResponse) :
 	formData  = httpClient.ReadRequestPostedFormData()
 	SSID = formData["SSID"]
 	PSK  = formData["PSK"]
-  URL  = formData["URL"]
-  USERNAME = formData["USERNAME"]
-  KEY  = formData["KEY"]
-  FEEDNAME  = formData["FEEDNAME"]
+	URL  = formData["URL"]
+	USERNAME = formData["USERNAME"]
+	KEY  = formData["KEY"]
+	FEEDNAME  = formData["FEEDNAME"]
 	content   = """\
 	<!DOCTYPE html>
 	<html lang=en>
@@ -152,7 +140,7 @@ def _httpHandlerSettingsPost(httpClient, httpResponse) :
 								  contentCharset = "UTF-8",
 								  content 		 = content )
 	setWifi(filename, SSID, PSK)
-  setADA(filename, URL, USERNAME, KEY, FEEDNAME)
+	setADA(filename, URL, USERNAME, KEY, FEEDNAME)
 
 
 @MicroWebSrv.route('/edit/<index>')             # <IP>/edit/123           ->   args['index']=123
@@ -207,12 +195,12 @@ def _closedCallback(webSocket) :
 # ----------------------------------------------------------------------------
 
 #routeHandlers = [
-#	( "/test",	"GET",	_httpHandlerTestGet ),
-#	( "/test",	"POST",	_httpHandlerTestPost )
+#	( "/settings",	"GET",	_httpHandlerTestGet ),
+#	( "/settings",	"POST",	_httpHandlerTestPost )
 #]
 
 srv = MicroWebSrv(webPath='www/')
 srv.MaxWebSocketRecvLen     = 256
-srv.WebSocketThreaded		= True
+srv.WebSocketThreaded		= False
 srv.AcceptWebSocketCallback = _acceptWebSocketCallback
-srv.Start(threaded=True)
+srv.Start()

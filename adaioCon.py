@@ -1,13 +1,10 @@
-import network
-import time
 from umqtt.robust import MQTTClient
 import os
 import sys
-import uasyncio as asyncio
 
 from settingsGetSet import getADA
 
-def aioTest ():
+def aioTest (filename):
   aioSuccess = False
   
   # create a random MQTT clientID 
@@ -22,7 +19,7 @@ def aioTest ():
   #         (about 1/4 of the micropython heap on the ESP8266 platform)
   
   
-  ADAFRUIT_IO_URL, ADAFRUIT_USERNAME, ADAFRUIT_IO_KEY, ADAFRUIT_IO_FEEDNAME = getADA()
+  ADAFRUIT_IO_URL, ADAFRUIT_USERNAME, ADAFRUIT_IO_KEY, ADAFRUIT_IO_FEEDNAME = getADA(filename)
 
   client = MQTTClient(client_id=mqtt_client_id, 
                       server=ADAFRUIT_IO_URL, 
@@ -32,13 +29,11 @@ def aioTest ():
       
   try:      
       client.connect()
-      aioSuccess = True
   except Exception as e:
       print('could not connect to MQTT server {}{}'.format(type(e).__name__, e))
       sys.exit()
-  return aioSuccess
 
-  '''
+  
   mqtt_feedname = bytes('{:s}/feeds/{:s}'.format(ADAFRUIT_USERNAME, ADAFRUIT_IO_FEEDNAME), 'utf-8')    
   client.set_callback(cb)                    
   client.subscribe(mqtt_feedname)  
@@ -54,14 +49,13 @@ def aioTest ():
 
   #Check if connection worked and return success/fail
   
-      try:
-          client.wait_msg())
-          print("Connected to ADAIO")
-          aioSuccess = True
-      except:
-        print("Couldn't connect to ADAIO")
+  try:
+      client.wait_msg()
+      print("Connected to ADAIO")
+      aioSuccess = True
+  except:
+    print("Couldn't connect to ADAIO")
   return aioSuccess
-'''
 
 
 # the following function is the callback which is 
@@ -73,7 +67,7 @@ def cb(topic, msg):
     
 
 
-def aioCon ():
+def aioCon (filename):
   # create a random MQTT clientID 
   random_num = int.from_bytes(os.urandom(3), 'little')
   mqtt_client_id = bytes('client_'+str(random_num), 'utf-8')
@@ -86,7 +80,10 @@ def aioCon ():
   #         (about 1/4 of the micropython heap on the ESP8266 platform)
   
   
-  ADAFRUIT_IO_URL, ADAFRUIT_USERNAME, ADAFRUIT_IO_KEY, ADAFRUIT_IO_FEEDNAME = getADA()
+  ADAFRUIT_IO_URL, ADAFRUIT_USERNAME, ADAFRUIT_IO_KEY, ADAFRUIT_IO_FEEDNAME = getADA(filename)
+
+  print (ADAFRUIT_IO_URL, ADAFRUIT_USERNAME, ADAFRUIT_IO_KEY, ADAFRUIT_IO_FEEDNAME)
+  print (filename)
 
   client = MQTTClient(client_id=mqtt_client_id, 
                       server=ADAFRUIT_IO_URL, 
@@ -98,7 +95,7 @@ def aioCon ():
       client.connect()
   except Exception as e:
       print('could not connect to MQTT server {}{}'.format(type(e).__name__, e))
-      sys.exit()
+      #sys.exit()
 
   mqtt_feedname = bytes('{:s}/feeds/{:s}'.format(ADAFRUIT_USERNAME, ADAFRUIT_IO_FEEDNAME), 'utf-8')    
   client.set_callback(cb)                    
@@ -115,9 +112,15 @@ def aioCon ():
   # wait until data has been Published to the Adafruit IO feed
   while True:
       try:
-          client.wait_msg())
+          client.wait_msg()
       except KeyboardInterrupt:
           print('Ctrl-C pressed...exiting')
           client.disconnect()
           sys.exit()
 
+'''
+  ADAFRUIT_IO_URL = b"io.adafruit.com"
+  ADAFRUIT_USERNAME= b"Scytale86"
+  ADAFRUIT_IO_KEY = b"aio_WAXD90YR4PiWD5EGCS0EVHcG2Olf"
+  ADAFRUIT_IO_FEEDNAME = b"onoff"
+'''

@@ -4,5 +4,5 @@
   "STATION": 
       {"SSID":"", "PSK":""},
     "ADAIO":
-      {"URL":"io.adafruit.com", "USERNAME": "Scytale86", "KEY": "aio_WAXD90YR4PiWD5EGCS0EVHcG2Olf", "FEEDNAME": "onoff"}
+      {"URL":"io.adafruit.com", "USERNAME": "", "KEY": "", "FEEDNAME": ""}
 }
