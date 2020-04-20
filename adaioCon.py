@@ -2,6 +2,8 @@ from umqtt.robust import MQTTClient
 import os
 import sys
 
+from gpioCon import relayOn, relayOff
+
 from settingsGetSet import getADA
 
 def aioTest (filename):
@@ -31,7 +33,8 @@ def aioTest (filename):
       client.connect()
   except Exception as e:
       print('could not connect to MQTT server {}{}'.format(type(e).__name__, e))
-      sys.exit()
+      return aioSuccess
+      #sys.exit()
 
   
   mqtt_feedname = bytes('{:s}/feeds/{:s}'.format(ADAFRUIT_USERNAME, ADAFRUIT_IO_FEEDNAME), 'utf-8')    
@@ -64,6 +67,12 @@ def cb(topic, msg):
     print('Received Data:  Topic = {}, Msg = {}'.format(topic, msg))
     free_heap = str(msg,'utf-8')
     print('free heap size = {} bytes'.format(free_heap))
+
+    if free_heap = "on":
+      relayOn()
+    if free_heap = "off":
+      relayOff()
+
     
 
 
