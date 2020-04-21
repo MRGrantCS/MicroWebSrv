@@ -6,6 +6,19 @@ from gpioCon import relayOn, relayOff
 
 from settingsGetSet import getADA
 
+# the following function is the callback which is 
+# called when subscribed data is received
+def cb(topic, msg):
+    print('Received Data:  Topic = {}, Msg = {}'.format(topic, msg))
+    free_heap = str(msg,'utf-8')
+    print('free heap size = {} bytes'.format(free_heap))
+    if free_heap.lower() == "on":
+      relayOn()
+    elif free_heap.lower() == "off":
+      relayOff()
+    else:
+      relayOff()
+
 def aioTest (filename):
   aioSuccess = False
   
@@ -56,25 +69,9 @@ def aioTest (filename):
       client.wait_msg()
       print("Connected to ADAIO")
       aioSuccess = True
-  except:
-    print("Couldn't connect to ADAIO")
+  except Exception as e:
+    print('could not connect to ADAIO {}{}'.format(type(e).__name__, e))
   return aioSuccess
-
-
-# the following function is the callback which is 
-# called when subscribed data is received
-def cb(topic, msg):
-    print('Received Data:  Topic = {}, Msg = {}'.format(topic, msg))
-    free_heap = str(msg,'utf-8')
-    print('free heap size = {} bytes'.format(free_heap))
-
-    if free_heap = "on":
-      relayOn()
-    if free_heap = "off":
-      relayOff()
-
-    
-
 
 def aioCon (filename):
   # create a random MQTT clientID 

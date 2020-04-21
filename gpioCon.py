@@ -1,10 +1,9 @@
 from machine import Pin
-from time import sleep
 
-def relayOn ():
+def relayOff ():
   relay = Pin(15, Pin.OUT)
   relay.value(1)
 
-def relayOut ():
+def relayOn ():
   relay = Pin(15, Pin.OUT)
   relay.value(0)
